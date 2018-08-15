@@ -20,8 +20,9 @@ export default class DeviceDetail extends Component {
             <TouchableOpacity onPress={() => this.props.deleteDevice()}><Text style={styles.badgeText}>delete</Text></TouchableOpacity>
           </View>
           <View style={styles.container3}>
-            <Text style={styles.detail}>{this.props.ip}</Text>
-            <Text style={styles.detail}>{this.props.port}</Text>
+            <Text style={styles.detail}>{this.props.code}</Text>
+            <Text style={styles.detail}>{this.props.clientCode}</Text>
+            <Text style={styles.detail}>{this.props.deviceCode}</Text>
           </View>
        </View>
       </View>

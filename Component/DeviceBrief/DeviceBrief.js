@@ -19,7 +19,7 @@ class DeviceBrief extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     margin: 5,
     padding: 5,
     flexDirection: 'row',

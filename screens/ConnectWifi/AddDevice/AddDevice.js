@@ -10,17 +10,19 @@ import { connect } from 'react-redux';
 import * as actions from '../../../store/actions/devices';
 import deviceImageOptions from '../../../images/DeviceImageOptions';
 
+
 class AddDevice extends Component {
 
     state = {
-        ip: '',
-        port: '',
-        name: '',imageIndex: 0
+        deviceCode: '',
+        clientCode: '', deviceName: '',
+        code: '', imageIndex: 0,
     }
 
     addDevice = () => {
       console.log("addDevice AddDevice");
-        this.props.addDeviceIpPort(this.state.ip,this.state.port,this.state.name,this.state.imageIndex);
+        this.props.addDeviceData(this.state.deviceName, this.state.code, this.state.clientCode, this.state.deviceCode, this.state.imageIndex);
+        // this.props.storeDevice(this.props.devices);
         startMainTabs();
     }
 
@@ -41,9 +43,9 @@ class AddDevice extends Component {
           console.log('this.state.imageIndex');console.log(this.state.imageIndex);
             if(index == this.state.imageIndex) {
               console.log('selected');console.log(this.state.imageIndex);
-              return (<TouchableOpacity style={styles.selected} key={item} onPress={() => this.chooseImage(index)}><Image style={styles.image} source={item}></Image></TouchableOpacity>);
+              return (<TouchableOpacity style={styles.selected} key={item} onPress={() => this.chooseImage(index)}><Image style={styles.image} source={item} /></TouchableOpacity>);
             }
-            return (<TouchableOpacity key={item} onPress={() => this.chooseImage(index)}><Image style={styles.image} source={item}></Image></TouchableOpacity>);
+            return (<TouchableOpacity key={item} onPress={() => this.chooseImage(index)}><Image style={styles.image} source={item} /></TouchableOpacity>);
           }}> </FlatList>
 
         return (
@@ -53,27 +55,32 @@ class AddDevice extends Component {
               </View>
               <View style={styles.infoContainer}>
                   {list}
-                  <TextInput style={styles.input} value={this.state.name} onChangeText={(text)=> this.setState({name: text})}
-                    placeholder="Enter name"
-                    placeholderTextColor='rgba(255,255,255,0.8)'
-                    keyboardType='email-address'
-                    returnKeyType='next'
-                    autoCorrect={false}
-                    onSubmitEditing={()=> this.refs.txtIp.focus()}
+                  <TextInput style={styles.input} value={this.state.deviceName} onChangeText={(text)=> this.setState({deviceName: text})}
+                             placeholder="Enter deviceName"
+                             placeholderTextColor='rgba(255,255,255,0.8)'
+                             returnKeyType='next'
+                             autoCorrect={false}
+                             onSubmitEditing={()=> this.refs.txtCode.focus()}
                   />
-                  <TextInput style={styles.input} value={this.state.ip} onChangeText={(text)=> this.setState({ip: text})}
-                      placeholder="Enter Ip"
+                  <TextInput style={styles.input} value={this.state.code} onChangeText={(text)=> this.setState({code: text})}
+                    placeholder="Enter code"
+                    placeholderTextColor='rgba(255,255,255,0.8)'
+                    returnKeyType='next'
+                    autoCorrect={false} ref={"txtCode"}
+                    onSubmitEditing={()=> this.refs.txtClientCode.focus()}
+                  />
+                  <TextInput style={styles.input} value={this.state.clientCode} onChangeText={(text)=> this.setState({clientCode: text})}
+                      placeholder="Enter client Code"
                       placeholderTextColor='rgba(255,255,255,0.8)'
-                      keyboardType='email-address'
                       returnKeyType='next'
                       autoCorrect={false}
-                      onSubmitEditing={()=> this.refs.txtPort.focus()}  ref={"txtIp"}
+                      onSubmitEditing={()=> this.refs.txtDeviceCode.focus()}  ref={"txtClientCode"}
                   />
-                  <TextInput style={styles.input} value={this.state.port} onChangeText={(text)=> this.setState({port: text})}
-                      placeholder="Enter Port"
+                  <TextInput style={styles.input} value={this.state.deviceCode} onChangeText={(text)=> this.setState({deviceCode: text})}
+                      placeholder="Enter Device Code"
                       placeholderTextColor='rgba(255,255,255,0.8)'
                       returnKeyType='go'
-                      autoCorrect={false} ref={"txtPort"}
+                      autoCorrect={false} ref={"txtDeviceCode"}
                   />
                   <TouchableOpacity style={styles.buttonContainer} onPress={this.addDevice}>
                      <Text style={styles.buttonText}>Add Devices</Text>
@@ -132,10 +139,17 @@ const styles = StyleSheet.create({
     }
 });
 
-const mapDispatchToProps = dispatch => {
+const mapStateToProps = state => {
     return {
-        addDeviceIpPort: (ip,port,name,imageIndex) => dispatch( actions.addDevice(ip,port,name,imageIndex) )
+        devices: state.nodes.devices
     };
 };
 
-export default connect(null,mapDispatchToProps)(AddDevice);
+const mapDispatchToProps = dispatch => {
+    return {
+        addDeviceData: (deviceName,code,clientCode,deviceCode,imageIndex) => dispatch( actions.addDevice(deviceName,code,clientCode,deviceCode,imageIndex) ),
+        storeDevice: (devices) => dispatch(actions.storeDeviceToStorage(devices))
+    };
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(AddDevice);

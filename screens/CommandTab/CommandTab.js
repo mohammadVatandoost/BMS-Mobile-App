@@ -9,13 +9,17 @@ import UDP from 'react-native-udp';
 import base64 from 'base64-js';
 import { connect } from 'react-redux';
 import DeviceBrief from '../../Component/DeviceBrief/DeviceBrief';
-import * as actions from '../../store/actions/devices';
+import * as actions from '../../store/actions/index';
 import deviceImageOptions from '../../images/DeviceImageOptions';
 
 class CommandTab extends Component {
 
     state = {
       message: [],
+    }
+
+    componentDidMount() {
+        // this.props.getDevicesFromStorage();
     }
 
     onChange = (text,key) => {
@@ -66,7 +70,7 @@ class CommandTab extends Component {
       if(this.props.devices.length > 0) {
         console.log("array");
         showDevices = this.props.devices.map((device) => {
-          return ( <TouchableOpacity style={styles.container2} key={device.name} onPress={() => this.goToTaskPage(device.name)}><DeviceBrief image={deviceImageOptions[device.imageIndex]} name={device.name}/></TouchableOpacity>);
+          return ( <TouchableOpacity style={styles.container2} key={device.deviceName} onPress={() => this.goToTaskPage(device.deviceName)}><DeviceBrief image={deviceImageOptions[device.imageIndex]} name={device.deviceName}/></TouchableOpacity>);
         });
       } else {
         console.log("nothing");
@@ -145,7 +149,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        currentDevice: (name) => dispatch( actions.currentDevice(name) )
+        currentDevice: (name) => dispatch( actions.currentDevice(name) ),
+        getDevicesFromStorage: () => dispatch( actions.getDevicesFromStorage() )
     };
 };
 

@@ -1,30 +1,35 @@
 import React, {Component} from 'react';
-import axios from 'axios';
 import {
     StyleSheet, Text, View, Image,
     TouchableWithoutFeedback, StatusBar,
-    TextInput, SafeAreaView, Keyboard, TouchableOpacity,
+    TextInput, ActivityIndicator, Keyboard, TouchableOpacity,
     KeyboardAvoidingView
 } from 'react-native'
 import startMainTabs from '../MainTabs/startMainTab';
-import Login from '../../Component/Login/Login';
+import * as actions from '../../store/actions/index';
+import { connect } from 'react-redux';
+import axios from 'axios';
 
 class AuthScreen extends Component {
 
     state = {
         switchView: 'SignIn',
-        registerData: {
-            name: '',
-            email: '',
-            pass: ''
-        },
-        loginData: {
-            email: '',
-            pass: ''
-        }
+        registerDataName: '',
+        registerDataEmail: '',
+        registerDataPass: '',
+        loginDataEmail: '',
+        loginDataPass: '',
+        forgetPassCode: ''
     }
+
+    componentDidMount() {
+        this.props.getDevicesFromStorage();
+        this.props.checkAuthState();
+    }
+
     signInHandler = () => {
-       startMainTabs();
+        const url = 'http://139.59.4.81:8080/user/login';
+        this.props.onAuth(this.state.loginDataEmail,this.state.loginDataPass,url);
     }
 
     passForgotHandler = () => {
@@ -32,12 +37,17 @@ class AuthScreen extends Component {
     }
 
     singUpHandler = () => {
-        startMainTabs();
-        // let url;
-        // axios.post(url,{name: this.state.registerData.name, email: this.state.registerData.email, pass: this.state.registerData.pass})
-        //     .then(() => {})
-        //     .catch(() => {});
+        const url = 'http://139.59.4.81:8080/user/register';
+        this.props.registerUser(this.state.registerDataName,this.state.registerDataEmail,this.state.registerDataPass,url);
+        // axios.post(url,{email: this.state.registerDataEmail, name: this.state.registerDataName, password: this.state.registerDataPass})
+        //     .then((response)=> {
+        //         console.log('singUpHandler');console.log(response);
+        //         // this.setState({switchView: 'SignIn'});
+        //         startMainTabs();
+        //     })
+        //     .catch((err)=> { console.log('singUpHandler');console.log(err); });
     }
+
 
     changeTab = (tabName) => {
       console.log(tabName);
@@ -52,16 +62,16 @@ class AuthScreen extends Component {
                       placeholder="Enter email"
                       placeholderTextColor='rgba(255,255,255,0.8)'
                       keyboardType='email-address'
-                      returnKeyType='next'
-                      autoCorrect={false}
+                      returnKeyType='next' onChangeText={(text) => this.setState({loginDataEmail: text})}
+                      autoCorrect={false} value={this.state.loginDataEmail}
                       onSubmitEditing={()=> this.refs.txtPassword.focus()}
                   />
                   <TextInput style={styles.input}
                       placeholder="Enter password"
                       placeholderTextColor='rgba(255,255,255,0.8)'
                       returnKeyType='go'
-                      secureTextEntry
-                      autoCorrect={false}
+                      secureTextEntry onChangeText={(text) => this.setState({loginDataPass: text})}
+                      autoCorrect={false}  value={this.state.loginDataPass}
                       ref={"txtPassword"}
                   />
                   <TouchableOpacity style={styles.buttonContainer} onPress={this.signInHandler}>
@@ -84,29 +94,30 @@ class AuthScreen extends Component {
                   placeholder="Enter username"
                   placeholderTextColor='rgba(255,255,255,0.8)'
                   keyboardType='email-address'
-                  returnKeyType='next'
-                  autoCorrect={false}
+                  returnKeyType='next' onChangeText={(text) => this.setState({registerDataName: text})}
+                  autoCorrect={false}  value={this.state.registerDataName}
                   onSubmitEditing={()=> this.refs.txtPassword.focus()}
               />
                   <TextInput style={styles.input}
                       placeholder="Enter email"
                       placeholderTextColor='rgba(255,255,255,0.8)'
                       keyboardType='email-address'
-                      returnKeyType='next'
-                      autoCorrect={false}
+                      returnKeyType='next' onChangeText={(text) => this.setState({registerDataEmail: text})}
+                      autoCorrect={false}  value={this.state.registerDataEmail}
                       onSubmitEditing={()=> this.refs.txtPassword.focus()}
                   />
                   <TextInput style={styles.input}
                       placeholder="Enter password"
                       placeholderTextColor='rgba(255,255,255,0.8)'
                       returnKeyType='go'
-                      secureTextEntry
-                      autoCorrect={false}
+                      secureTextEntry onChangeText={(text) => this.setState({registerDataPass: text})}
+                      autoCorrect={false}  value={this.state.registerDataPass}
                       ref={"txtPassword"}
                   />
-                  <TouchableOpacity style={styles.buttonContainer} onPress={this.singUpHandler}>
+                  { (!this.props.loading) && <TouchableOpacity style={styles.buttonContainer} onPress={this.singUpHandler}>
                       <Text style={styles.buttonText}>SIGN UP</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity>}
+                  {this.props.loading && <ActivityIndicator size="large" color="#0000ff" />}
                   <View style={styles.badgeContainer}>
                      <TouchableOpacity onPress={() => this.changeTab('SignIn')}>
                        <Text style={styles.badgeText}>Sign In</Text>
@@ -121,8 +132,8 @@ class AuthScreen extends Component {
                       placeholder="Enter email"
                       placeholderTextColor='rgba(255,255,255,0.8)'
                       returnKeyType='go'
-                      secureTextEntry
-                      autoCorrect={false}
+                      secureTextEntry onChangeText={(text) => this.setState({forgetPassCode: text})}
+                      autoCorrect={false} value={this.state.forgetPassCode}
                       ref={"txtPassword"}
                   />
                   <TouchableOpacity style={styles.buttonContainer} onPress={this.passForgotHandler}>
@@ -142,6 +153,10 @@ class AuthScreen extends Component {
     }
 
     render() {
+        if(this.props.token) {
+            console.log("render authenticated");
+            startMainTabs();
+        }
         return (
           <View style={styles.container}>
               <StatusBar barStyle="light-content" />
@@ -235,4 +250,21 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AuthScreen;
+const mapStateToProps = state => {
+    return {
+        errorServer: state.auth.error,
+        loading: state.auth.loading,
+        token: state.auth.token
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onAuth: (email,password,url) => dispatch(actions.auth(email,password,url)),
+        checkAuthState: () => dispatch( actions.authCheckState() ),
+        registerUser: (name,email,password,url) => dispatch(actions.authRegister(name,email,password,url)),
+        getDevicesFromStorage: () => dispatch( actions.getDevicesFromStorage() )
+    };
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(AuthScreen);

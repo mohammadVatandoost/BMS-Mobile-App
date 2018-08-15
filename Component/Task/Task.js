@@ -15,11 +15,11 @@ class DeviceTasks extends Component {
         let showCommandText;
         console.log('command props');console.log(this.props.command);
         console.log('name props');console.log(this.props.name);
-        if(this.props.command !== null){showCommandText = <Text style={styles.text}>{this.props.command}</Text>}
+        // if(this.props.command !== null){showCommandText = <Text style={styles.text}>{this.props.command}</Text>}
         return (
             <View style={styles.container}>
                 <Text style={styles.text}>{this.props.name}</Text>
-                {showCommandText}
+                {/*{showCommandText}*/}
             </View>
         );
     }

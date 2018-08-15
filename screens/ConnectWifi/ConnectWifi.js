@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import * as actions from '../../store/actions/devices';
 import DeviceDetail from '../../Component/DeviceDetail/DeviceDetail';
 import deviceImageOptions from '../../images/DeviceImageOptions';
-
+import { AsyncStorage } from "react-native";
 class ConnectWifi extends Component {
 
     state = {
@@ -23,9 +23,21 @@ class ConnectWifi extends Component {
     }
 
     componentDidMount() {
-        console.log("devices");
-        console.log(this.props.devices);
+        // this.props.getDevicesFromStorage();
+        this.saveDevices(this.props.devices);
     }
+
+    saveDevices= async (devices) => {
+        try {
+            console.log("save Devices");
+            console.log(devices);
+            await AsyncStorage.setItem('devices', JSON.stringify(devices));
+            console.log("save Devices");
+        } catch (error) {
+            // Error retrieving data
+            console.log(error.message);
+        }
+    };
 
     onChange =(e) => {
         this.setState({[e.target.name]: e.target.value});
@@ -50,12 +62,14 @@ class ConnectWifi extends Component {
 
     render() {
         let showDevices;
+        console.log("connectWifi");
         console.log(this.props.devices);
         if(this.props.devices.length > 0) {
           console.log("array");
           showDevices = this.props.devices.map((device) => {
-            return (<DeviceDetail image={deviceImageOptions[device.imageIndex]} editDevice={this.editDevice} deleteDevice={this.deleteDevice} key={device.ip} name={device.name} ip={device.ip} port={device.port}  />);
-            // return (<View key={device.ip} style={styles.titleContainer}><Text style={styles.title}>{device.name} {device.ip} {device.port}</Text></View> )
+            return (<DeviceDetail image={deviceImageOptions[device.imageIndex]} editDevice={this.editDevice}
+                                  deleteDevice={this.deleteDevice} key={device.deviceName} name={device.deviceName}
+                                  code={device.code} clientCode={device.clientCode} deviceCode={device.deviceCode}  />);
           });
         } else {
           console.log("nothing");
@@ -115,4 +129,10 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps,null)(ConnectWifi);
+const mapDispatchToProps = dispatch => {
+    return {
+        getDevicesFromStorage: () => dispatch( actions.getDevicesFromStorage() )
+    };
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(ConnectWifi);

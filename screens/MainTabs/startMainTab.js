@@ -15,12 +15,6 @@ const startTabs = () => {
                     icon: sources[0]
                 },
                 {
-                    screen: 'AwesomeProject.DefineTaskScreen',
-                    label: 'Define Task',
-                    title: 'Define Task',
-                    icon: sources[2]
-                },
-                {
                     screen: 'AwesomeProject.CommandTabScreen',
                     label: 'Command',
                     title: 'Set Command',
@@ -33,4 +27,11 @@ const startTabs = () => {
 
 // icon: sources[0]
 // icon: sources[1]
+
+// {
+//     screen: 'AwesomeProject.DefineTaskScreen',
+//         label: 'Define Task',
+//     title: 'Define Task',
+//     icon: sources[2]
+// },
 export default startTabs;
