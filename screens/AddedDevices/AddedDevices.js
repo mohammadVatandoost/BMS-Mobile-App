@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
 import {
-    StyleSheet, Text, View, Image,
-    TouchableWithoutFeedback, StatusBar,
-    TextInput, SafeAreaView, Keyboard, TouchableOpacity,
-    KeyboardAvoidingView
+    StyleSheet, Text, View, TouchableOpacity,
 } from 'react-native'
-import UDP from 'react-native-udp';
-import base64 from 'base64-js';
-import { Navigation } from 'react-native-navigation';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions/devices';
 import DeviceDetail from '../../Component/DeviceDetail/DeviceDetail';
+import DeviceBrief from '../../Component/DeviceBrief/DeviceBrief';
 import deviceImageOptions from '../../images/DeviceImageOptions';
 import { AsyncStorage } from "react-native";
 class ConnectWifi extends Component {
@@ -23,8 +18,7 @@ class ConnectWifi extends Component {
     }
 
     componentDidMount() {
-        // this.props.getDevicesFromStorage();
-        this.saveDevices(this.props.devices);
+       this.props.getDevicesFromStorage();
     }
 
     saveDevices= async (devices) => {
@@ -34,7 +28,6 @@ class ConnectWifi extends Component {
             await AsyncStorage.setItem('devices', JSON.stringify(devices));
             console.log("save Devices");
         } catch (error) {
-            // Error retrieving data
             console.log(error.message);
         }
     };
@@ -45,20 +38,15 @@ class ConnectWifi extends Component {
 
     addDevice = () => {
       console.log("addDevice");
-      // Navigation.startSingleScreenApp({
-      //     screen: {
-      //       screen: "AwesomeProject.AddDevice",
-      //     }
-      // });
       this.props.navigator.push({
         screen: "AwesomeProject.AddDevice",
         title: "New device info"
       })
     }
 
-    editDevice = () => {}
-
-    deleteDevice = () => {}
+    deleteDevice = (deviceName) => {
+        this.props.deleteDevice(deviceName);
+    }
 
     render() {
         let showDevices;
@@ -67,14 +55,15 @@ class ConnectWifi extends Component {
         if(this.props.devices.length > 0) {
           console.log("array");
           showDevices = this.props.devices.map((device) => {
-            return (<DeviceDetail image={deviceImageOptions[device.imageIndex]} editDevice={this.editDevice}
-                                  deleteDevice={this.deleteDevice} key={device.deviceName} name={device.deviceName}
-                                  code={device.code} clientCode={device.clientCode} deviceCode={device.deviceCode}  />);
+            return (<DeviceDetail image={deviceImageOptions[device.imageIndex]} deleteDevice={this.deleteDevice}
+                                  key={device.deviceName} name={device.deviceName} code={device.code}
+                                  clientCode={device.clientCode} deviceCode={device.deviceCode}  />);
           });
         } else {
           console.log("nothing");
           showDevices = <View style={styles.titleContainer}><Text style={styles.title}>No Device Added</Text></View>
         }
+        console.log("OK");
         return (
             <View style={styles.container}>
               {showDevices}
@@ -131,7 +120,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        getDevicesFromStorage: () => dispatch( actions.getDevicesFromStorage() )
+        getDevicesFromStorage: () => dispatch( actions.getDevicesFromStorage() ),
+        deleteDevice: (deviceName) => dispatch(actions.deleteDevice(deviceName))
     };
 };
 

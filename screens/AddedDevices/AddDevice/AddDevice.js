@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import {
-    StyleSheet, Text, View, Image,
-    TouchableWithoutFeedback, StatusBar,
-    TextInput, SafeAreaView, Keyboard, TouchableOpacity,
-    KeyboardAvoidingView, FlatList
+    StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList
 } from 'react-native'
 import startMainTabs from '../../MainTabs/startMainTab';
 import { connect } from 'react-redux';
@@ -62,26 +59,34 @@ class AddDevice extends Component {
                              autoCorrect={false}
                              onSubmitEditing={()=> this.refs.txtCode.focus()}
                   />
-                  <TextInput style={styles.input} value={this.state.code} onChangeText={(text)=> this.setState({code: text})}
-                    placeholder="Enter code"
-                    placeholderTextColor='rgba(255,255,255,0.8)'
-                    returnKeyType='next'
-                    autoCorrect={false} ref={"txtCode"}
-                    onSubmitEditing={()=> this.refs.txtClientCode.focus()}
-                  />
-                  <TextInput style={styles.input} value={this.state.clientCode} onChangeText={(text)=> this.setState({clientCode: text})}
-                      placeholder="Enter client Code"
+                  <View style={styles.rowContainer}>
+                  <View style={styles.colContainer}>
+                    <Text style={styles.textHeader5}>Code</Text>
+                    <TextInput style={styles.smallInput} value={this.state.code} onChangeText={(text)=> this.setState({code: text})}
+                     placeholderTextColor='rgba(255,255,255,0.8)'
+                     returnKeyType='next'
+                     autoCorrect={false} ref={"txtCode"}
+                     onSubmitEditing={()=> this.refs.txtClientCode.focus()}
+                    />
+                  </View>
+                  <View style={styles.colContainer}>
+                    <Text style={styles.textHeader5}>client</Text>
+                    <TextInput style={styles.smallInput} value={this.state.clientCode} onChangeText={(text)=> this.setState({clientCode: text})}
                       placeholderTextColor='rgba(255,255,255,0.8)'
                       returnKeyType='next'
                       autoCorrect={false}
                       onSubmitEditing={()=> this.refs.txtDeviceCode.focus()}  ref={"txtClientCode"}
-                  />
-                  <TextInput style={styles.input} value={this.state.deviceCode} onChangeText={(text)=> this.setState({deviceCode: text})}
-                      placeholder="Enter Device Code"
+                    />
+                  </View>
+                  <View style={styles.colContainer}>
+                    <Text style={styles.textHeader5}>device</Text>
+                    <TextInput style={styles.smallInput} value={this.state.deviceCode} onChangeText={(text)=> this.setState({deviceCode: text})}
                       placeholderTextColor='rgba(255,255,255,0.8)'
                       returnKeyType='go'
                       autoCorrect={false} ref={"txtDeviceCode"}
-                  />
+                    />
+                  </View>
+                  </View>
                   <TouchableOpacity style={styles.buttonContainer} onPress={this.addDevice}>
                      <Text style={styles.buttonText}>Add Devices</Text>
                   </TouchableOpacity>
@@ -96,6 +101,18 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgb(32, 53, 70)',
         flexDirection: 'column',
         flex: 1,
+    },
+    rowContainer: {
+        flexDirection: 'row', justifyContent: 'space-around'
+    },
+    colContainer: {
+        flexDirection: 'column', justifyContent: 'space-around'
+    },
+    textHeader: {
+        fontSize: 17, color: 'rgb(255, 255, 255)', textAlign: 'center', margin: 10
+    },
+    textHeader5: {
+        fontSize: 12, color: 'rgb(255, 255, 255)', textAlign: 'center', margin: 5
     },
     image: {
       width: 60, height: 60,margin: 3
@@ -115,6 +132,13 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 40,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        color: '#FFF',
+        marginBottom: 20,
+        paddingHorizontal: 10
+    },
+    smallInput: {
+        height: 40, width: 100,
         backgroundColor: 'rgba(255,255,255,0.2)',
         color: '#FFF',
         marginBottom: 20,
