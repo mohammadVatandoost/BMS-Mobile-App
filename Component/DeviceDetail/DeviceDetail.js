@@ -9,18 +9,17 @@ import {
 
 export default class DeviceDetail extends Component {
 
+
   render() {
     return (
-      <View style={styles.container}>
-      <Image style={styles.image} source={this.props.image}></Image>
+     <View style={styles.container}>
+       <Image style={styles.image} source={this.props.image} />
        <View style={styles.container2}>
           <View style={styles.container4}>
             <Text style={styles.name}>{this.props.name}</Text>
-            <TouchableOpacity onPress={() => this.props.editDevice()}><Text style={styles.editText}>Edit</Text></TouchableOpacity>
-            <TouchableOpacity onPress={() => this.props.deleteDevice()}><Text style={styles.badgeText}>delete</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => this.props.deleteDevice(this.props.name)}><Text style={styles.badgeText}>delete</Text></TouchableOpacity>
           </View>
           <View style={styles.container3}>
-            <Text style={styles.detail}>{this.props.code}</Text>
             <Text style={styles.detail}>{this.props.clientCode}</Text>
             <Text style={styles.detail}>{this.props.deviceCode}</Text>
           </View>
@@ -29,6 +28,8 @@ export default class DeviceDetail extends Component {
     );
   }
 }
+
+{/*<TouchableOpacity onPress={() => this.editDevice()}><Text style={styles.editText}>Edit</Text></TouchableOpacity>*/}
 
 const styles = StyleSheet.create({
   container: {
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   container4: {
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   image: {
     width: 50, height: 50
@@ -57,7 +58,8 @@ const styles = StyleSheet.create({
       color :'#F1F1F1',
       fontWeight: 'bold',
       fontSize: 15,
-      paddingHorizontal: 10,marginTop: 5
+      marginTop: 5,
+      marginLeft: 50
   },
   editText: {
     textAlign: 'center',

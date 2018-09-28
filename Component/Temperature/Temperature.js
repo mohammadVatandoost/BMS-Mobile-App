@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import {
     StyleSheet, View, Text,
-    TouchableOpacity,
+    TouchableOpacity, ToastAndroid
 } from 'react-native'
 import UDP from 'react-native-udp';
 import base64 from 'base64-js';
 import DeviceBrief from '../../Component/DeviceBrief/DeviceBrief';
 import Task from '../../Component/Task/Task';
 import deviceImageOptions from '../../images/DeviceImageOptions';
+import Config from '../../Config';
 
 class Temperature extends Component {
 
@@ -40,7 +41,7 @@ class Temperature extends Component {
         return (
             <View style={styles.container}>
                 <DeviceBrief image={deviceImageOptions[this.props.imageIndex]} name={this.props.deviceName} />
-                <Text>Temperature : {this.state.Temperature}</Text>
+                <Text style={styles.textHeader}>Temperature : {this.state.Temperature}</Text>
                 <TouchableOpacity style={styles.taskContainer} onPress={() => this.sendMessage('get')}><Task name={'get temperature'} /></TouchableOpacity>
             </View>
         );
@@ -56,44 +57,8 @@ const styles = StyleSheet.create({
     rowContainer: {
         flexDirection: 'row', justifyContent: 'space-around'
     },
-    taskContainer: {
-        margin: 5,
-    },
-    titleContainer: {
-        alignItems: 'center',
-        marginTop: 25,
-        flex: 1
-    },
-    title: {
-        color: '#f7c744',
-        fontSize: 18,
-        textAlign: 'center',
-        marginTop: 5,
-        opacity: 0.9
-    },
-    input: {
-        height: 40,
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        color: '#FFF',
-        marginBottom: 20,
-        paddingHorizontal: 10
-    },
-    buttonsView: {
-        flexDirection: 'row',padding: 10, alignItems: 'center',justifyContent: 'center'
-    },
-    buttons: {
-        width: 110, height: 40, marginLeft: 15, marginRight: 15
-    },
-    buttonContainer: {
-        backgroundColor: '#f7c744',
-        paddingVertical: 15,
-        margin: 20
-    },
-    buttonText: {
-        textAlign: 'center',
-        color :'rgb(32, 53, 70)',
-        fontWeight: 'bold',
-        fontSize: 18
+    textHeader: {
+        fontSize: 17, color: 'rgb(255, 255, 255)', textAlign: 'center', margin: 10
     }
 });
 

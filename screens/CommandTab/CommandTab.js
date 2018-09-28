@@ -19,7 +19,7 @@ class CommandTab extends Component {
     }
 
     componentDidMount() {
-        // this.props.getDevicesFromStorage();
+        this.props.getDevicesFromStorage();
     }
 
     onChange = (text,key) => {
@@ -38,22 +38,22 @@ class CommandTab extends Component {
     }
 
     sendMessage = (ip,port,key) => {
-      console.log("sendMessage");
+      // console.log("sendMessage");
       let udpSocket = UDP.createSocket('udp4');
       // let PORT = this.state.port;
       // let HOST = this.state.ip;
       let PORT = parseInt(port, 10);; // 4211
       let HOST = ip; // 192.168.1.13
       let messageBuffer = this.toByteArray(this.state.message[key]);
-      console.log("messageBuffer");
-      console.log(messageBuffer);
+      // console.log("messageBuffer");
+      // console.log(messageBuffer);
         // this.setState({message: "sending"})
         udpSocket.send(messageBuffer, 0, messageBuffer.length, PORT, HOST, function(err) {
             if (err) { throw err;console.log(err);}
-            console.log('UDP message sent to ' + HOST +':'+ PORT);
+            // console.log('UDP message sent to ' + HOST +':'+ PORT);
             udpSocket.close();
         });
-          console.log("udpSocket");
+          // console.log("udpSocket");
     }
 
     goToTaskPage = (deviceName) => {
@@ -66,9 +66,9 @@ class CommandTab extends Component {
 
     render() {
       let showDevices;
-      console.log(this.props.devices);
+      // console.log(this.props.devices);
       if(this.props.devices.length > 0) {
-        console.log("array");
+        // console.log("CommandTab array");
         showDevices = this.props.devices.map((device) => {
           return ( <TouchableOpacity style={styles.container2} key={device.deviceName} onPress={() => this.goToTaskPage(device.deviceName)}><DeviceBrief image={deviceImageOptions[device.imageIndex]} name={device.deviceName}/></TouchableOpacity>);
         });

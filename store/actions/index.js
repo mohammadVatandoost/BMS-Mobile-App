@@ -5,4 +5,5 @@ export {
     authCheckState
 } from './auth';
 
-export { addDevice, addTask, currentDevice, getDevicesFromStorage, sendDevicesToReducers, storeDeviceToStorage } from './devices'
+export { addDevice, addTask, currentDevice, getDevicesFromStorage, sendDevicesToReducers, 
+	storeDeviceToStorage, removeAllDevice } from './devices'

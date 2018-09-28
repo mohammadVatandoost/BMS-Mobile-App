@@ -17,10 +17,7 @@ class DeviceTasks extends Component {
         console.log('name props');console.log(this.props.name);
         // if(this.props.command !== null){showCommandText = <Text style={styles.text}>{this.props.command}</Text>}
         return (
-            <View style={styles.container}>
-                <Text style={styles.text}>{this.props.name}</Text>
-                {/*{showCommandText}*/}
-            </View>
+            <View style={styles.container}><Text style={styles.text}>{this.props.name}</Text></View>
         );
     }
 }

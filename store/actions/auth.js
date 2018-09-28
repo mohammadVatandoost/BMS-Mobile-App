@@ -48,10 +48,10 @@ export const auth = (email, password,url) => {
 
         axios.post(url, authData)
             .then((response) => {
-                console.log("token");
-                console.log(response.headers.x-auth);
-                    AsyncStorage.setItem('token', response.headers.x-auth);
-                    dispatch(authSuccess(response.headers.x-auth));
+                // console.log("token");
+                // console.log(response.headers['x-auth']);
+                    AsyncStorage.setItem('token', response.headers['x-auth']);
+                    dispatch(authSuccess(response.headers['x-auth']));
             })
             .catch(err => {
                 console.log("error");
@@ -72,17 +72,11 @@ export const authRegister = (name,email,password,url) => {
 
         axios.post(url, authData)
             .then((response) => {
-                console.log("response");
-                console.log(response);
-                console.log("token");
-                console.log(response.headers['x-auth']);
                 AsyncStorage.setItem('token', response.headers['x-auth']);
                 dispatch(authSuccess(response.headers['x-auth']));
             })
             .catch(err => {
-                console.log("error");
-                console.log(err);
-                dispatch(authFail('دوباره امتحان کنید'));
+                dispatch(authFail('try again'));
             });
     };
 };
@@ -92,20 +86,13 @@ export const authGoogle = (response) => {
     return dispatch => {
         if(response.data != 404)
         {
-            console.log("authGoogle");console.log(response);
+            // console.log("authGoogle");console.log(response);
             AsyncStorage.setItem('token', response.data.token);
             dispatch(authSuccess(response.data.token));
         } else {
             console.log("Erorr");
             dispatch(authFail('ایمیل یا رمز خود را اشتباه وارد کرده اید'));
         }
-    };
-};
-
-export const setAuthRedirectPath = (path) => {
-    return {
-        type: actionTypes.SET_AUTH_REDIRECT_PATH,
-        path: path
     };
 };
 

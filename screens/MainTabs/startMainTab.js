@@ -9,9 +9,9 @@ const startTabs = () => {
         Navigation.startTabBasedApp({
             tabs: [
                 {
-                    screen: 'AwesomeProject.ConnectWifiScreen',
+                    screen: 'AwesomeProject.AuthAdmin',
                     label: 'Add Device',
-                    title: 'Add Device',
+                    title: 'Enter Admin Password',
                     icon: sources[0]
                 },
                 {

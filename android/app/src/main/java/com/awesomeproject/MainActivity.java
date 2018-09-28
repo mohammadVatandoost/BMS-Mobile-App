@@ -12,6 +12,7 @@ import android.view.Gravity;
 import com.reactnativenavigation.controllers.SplashActivity;
 
 public class MainActivity extends SplashActivity  {
+  
      @Override
      public LinearLayout createSplashLayout() {
        LinearLayout view = new LinearLayout(this);

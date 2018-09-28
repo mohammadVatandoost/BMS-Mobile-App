@@ -10,7 +10,8 @@ const initialState = {
 const addDevice = (state, action) => {
   console.log('addDevice reducers');
    let temp = state.devices;
-   temp.push({deviceName: action.deviceName, code: action.code, clientCode: action.clientCode, deviceCode: action.deviceCode,imageIndex: action.imageIndex,tasks: []});
+   temp.push({deviceName: action.deviceName, clientCode: action.clientCode, deviceCode: action.deviceCode,imageIndex: action.imageIndex});
+     AsyncStorage.setItem('devices', JSON.stringify(temp));
    return updateObject(state, {devices: temp});
 }
 
@@ -27,9 +28,36 @@ const addTask = (state, action) => {
 }
 
 const getDevicesFromStorage = (state, action) => {
-    console.log("getDevicesFromStorage");console.log(action.devices);
+    // console.log("getDevicesFromStorage");console.log(action.devices);
     return updateObject(state, {devices: action.devices});
 }
+
+const deleteDevice = (state, action) => {
+
+    let temp = state.devices.filter((deviceItem) => {
+          return  deviceItem.deviceName !== action.deviceName;
+    });
+    // temp = [];
+    AsyncStorage.setItem('devices', JSON.stringify(temp));
+    // console.log(action.deviceName);
+    // console.log("Reducers delete");console.log(temp);
+    return updateObject(state, {devices: temp});
+}
+
+const editDevice = (state, action) => {
+    let temp = state.devices.map((device) => {
+       if(device.deviceName === action.device.deviceName) {
+           return action.device
+       } else { return device }
+    });
+    return updateObject(state, {devices: temp});
+}
+
+const removeAllDevice = (state, action) => {
+    let temp = [];
+    AsyncStorage.setItem('devices', JSON.stringify(temp));
+    return updateObject(state, {devices: temp});
+}        
 
 const reducer = ( state = initialState, action ) => {
     switch ( action.type ) {
@@ -37,6 +65,9 @@ const reducer = ( state = initialState, action ) => {
         case actionTypes.CURRENT_DEVICE: return currentDevice(state, action);
         case actionTypes.ADD_TASK: return addTask(state, action);
         case actionTypes.GET_DEVICES_FROM_STORAGE: return getDevicesFromStorage(state, action);
+        case actionTypes.DELETE_DEVICE: return deleteDevice(state, action);
+        case actionTypes.EDIT_DEVICE: return editDevice(state, action);
+        case actionTypes.REMOVE_ALL: return removeAllDevice(state, action);
         default:
             return state;
     }

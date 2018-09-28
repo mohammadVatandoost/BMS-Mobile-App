@@ -1,12 +1,11 @@
 import * as actionTypes from './actionTypes';
 import { AsyncStorage } from "react-native";
 
-export const addDevice = (deviceName,code,clientCode,deviceCode,imageIndex) => {
-  console.log('addDevice actions');
+export const addDevice = (deviceName,clientCode,deviceCode,imageIndex) => {
+  // console.log('addDevice actions');
     return {
        type: actionTypes.ADD_DEVICE,
        deviceName: deviceName,
-       code: code,
        clientCode: clientCode,
        deviceCode: deviceCode,
        imageIndex: imageIndex
@@ -34,8 +33,8 @@ export const getDevicesFromStorage = () => {
         AsyncStorage.getItem('devices')
             .catch((err) => reject())
             .then((devices)=> {
-                console.log("getDevicesFromStorage");
-            console.log(devices);
+                // console.log("getDevicesFromStorage");
+            // console.log(devices);
                 if (!devices) {
                     dispatch(sendDevicesToReducers([]));
                 } else {
@@ -47,7 +46,7 @@ export const getDevicesFromStorage = () => {
 }
 
 export const sendDevicesToReducers = (devices) => {
-    console.log("sendDevicesToReducers");console.log(devices);
+    // console.log("sendDevicesToReducers");console.log(devices);
     return {
         type: actionTypes.GET_DEVICES_FROM_STORAGE,
         devices: devices
@@ -57,12 +56,13 @@ export const sendDevicesToReducers = (devices) => {
 export const storeDeviceToStorage = (devices) => {
     return dispatch => {
         AsyncStorage.setItem('devices', JSON.stringify(devices));
-        console.log("storeDeviceToStorage");console.log(devices);
+        // console.log("storeDeviceToStorage");console.log(devices);
         dispatch(sendDevicesToReducers(devices));
     };
 }
 
 export const deleteDevice = (deviceName) => {
+    // console.log("actions delete");
     return {
         type: actionTypes.DELETE_DEVICE,
         deviceName: deviceName
@@ -73,5 +73,11 @@ export const editDevice = (device) => {
     return {
         type: actionTypes.EDIT_DEVICE,
         device: device
+    }
+}
+
+export const removeAllDevice = () => {
+    return {
+        type: actionTypes.REMOVE_ALL
     }
 }

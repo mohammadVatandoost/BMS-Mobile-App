@@ -29,6 +29,7 @@ class AuthScreen extends Component {
 
     signInHandler = () => {
         const url = 'http://139.59.4.81:8080/user/login';
+        console.log("signInHandler");
         this.props.onAuth(this.state.loginDataEmail,this.state.loginDataPass,url);
     }
 
@@ -39,13 +40,6 @@ class AuthScreen extends Component {
     singUpHandler = () => {
         const url = 'http://139.59.4.81:8080/user/register';
         this.props.registerUser(this.state.registerDataName,this.state.registerDataEmail,this.state.registerDataPass,url);
-        // axios.post(url,{email: this.state.registerDataEmail, name: this.state.registerDataName, password: this.state.registerDataPass})
-        //     .then((response)=> {
-        //         console.log('singUpHandler');console.log(response);
-        //         // this.setState({switchView: 'SignIn'});
-        //         startMainTabs();
-        //     })
-        //     .catch((err)=> { console.log('singUpHandler');console.log(err); });
     }
 
 
@@ -74,9 +68,10 @@ class AuthScreen extends Component {
                       autoCorrect={false}  value={this.state.loginDataPass}
                       ref={"txtPassword"}
                   />
-                  <TouchableOpacity style={styles.buttonContainer} onPress={this.signInHandler}>
+                  { (!this.props.loading) && <TouchableOpacity style={styles.buttonContainer} onPress={this.signInHandler}>
                       <Text style={styles.buttonText}>SIGN IN</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity>}
+                  {this.props.loading && <ActivityIndicator size="large" color="#0000ff" />}
                   <View style={styles.badgeContainer}>
                      <TouchableOpacity onPress={() => this.changeTab('forgetPass')}>
                       <Text style={styles.badgeText}>Forgot Password?</Text>
@@ -191,7 +186,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     logo: {
-        width: 128,
+        width: 300,
         height: 56,
     },
     title: {

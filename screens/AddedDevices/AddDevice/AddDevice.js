@@ -1,38 +1,81 @@
 import React, { Component } from 'react';
 import {
-    StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList
+    StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList, ToastAndroid
 } from 'react-native'
-import startMainTabs from '../../MainTabs/startMainTab';
 import { connect } from 'react-redux';
 import * as actions from '../../../store/actions/devices';
 import deviceImageOptions from '../../../images/DeviceImageOptions';
+import UDP from 'react-native-udp';
+import Config from '../../../Config';
+import Commands from '../../../Commands';
 
+let udpSocket;let sendStatus = false;
 
 class AddDevice extends Component {
-
-    state = {
-        deviceCode: '',
-        clientCode: '', deviceName: '',
-        code: '', imageIndex: 0,
+    constructor(props) {
+        super(props);
+        this.state = {
+            deviceCode: '',
+            clientCode: '', deviceName: '',
+            imageIndex: 0,
+        }
+        udpSocket = UDP.createSocket('udp4');
+        udpSocket.bind(Config.port, function(err) {
+            if (err) throw err;
+            // console.log('udpSocket bound to ' + JSON.stringify(udpSocket.address()));
+        });
+        udpSocket.on('message', function(data, rinfo) {
+            let str = String.fromCharCode.apply(null, new Uint8Array(data));
+            // console.log('a received echo ' + str + ' ' + JSON.stringify(rinfo));
+            sendStatus = true;
+            if(str === 'T') {ToastAndroid.show('Your command send successfully', ToastAndroid.LONG);}
+            if(str === 'F') {ToastAndroid.show('Your command is not acceptable', ToastAndroid.LONG);}
+        })
     }
 
     addDevice = () => {
       console.log("addDevice AddDevice");
-        this.props.addDeviceData(this.state.deviceName, this.state.code, this.state.clientCode, this.state.deviceCode, this.state.imageIndex);
-        // this.props.storeDevice(this.props.devices);
-        startMainTabs();
-    }
+        let PORT = Config.port; // 4211
+        let HOST = Config.ip; // 192.168.1.13
+        let message = Commands.addClientDeviceCode + this.state.clientCode + this.state.deviceCode ;
+        console.log("message");
+        console.log(message);
+        let messageBuffer = this.toByteArray(message);
+        sendStatus = false;
+        // Toggle the state every second
+        setTimeout(() => {
+            if(!this.state.sendSuccessful) {ToastAndroid.show('Your command does not send,Check your connection please', ToastAndroid.LONG);}
+        }, Config.timeOut);
+        udpSocket.send(messageBuffer, 0, messageBuffer.length, PORT, HOST, function(err) {
+            if (err) { throw err;}
+            console.log('UDP message sent to ' + HOST +':'+ PORT);
+        });
+        console.log("udpSocket");
+        this.props.addDeviceData(this.state.deviceName, this.state.clientCode, this.state.deviceCode, this.state.imageIndex);
+        this.props.navigator.push({
+            screen: "AwesomeProject.AddedDevices",
+            title: "Add Device"
+        })
+    };
+
+    toByteArray = (obj) => {
+        let uint = new Uint8Array(obj.length);
+        for (let i = 0, l = obj.length; i < l; i++){
+            uint[i] = obj.charCodeAt(i);
+        }
+        return new Uint8Array(uint);
+    };
 
     chooseImage = (index) => {
-      console.log(index);
+      // console.log(index);
       this.setState({imageIndex: index});
-    }
+    };
 
     selected = (index) => {
      if(index == this.state.imageIndex) {
        return  { borderColor: '#f7c744',borderWidth: 2, margin: 2 };
      }
-    }
+    };
 
     render() {
        let list;
@@ -60,15 +103,6 @@ class AddDevice extends Component {
                              onSubmitEditing={()=> this.refs.txtCode.focus()}
                   />
                   <View style={styles.rowContainer}>
-                  <View style={styles.colContainer}>
-                    <Text style={styles.textHeader5}>Code</Text>
-                    <TextInput style={styles.smallInput} value={this.state.code} onChangeText={(text)=> this.setState({code: text})}
-                     placeholderTextColor='rgba(255,255,255,0.8)'
-                     returnKeyType='next'
-                     autoCorrect={false} ref={"txtCode"}
-                     onSubmitEditing={()=> this.refs.txtClientCode.focus()}
-                    />
-                  </View>
                   <View style={styles.colContainer}>
                     <Text style={styles.textHeader5}>client</Text>
                     <TextInput style={styles.smallInput} value={this.state.clientCode} onChangeText={(text)=> this.setState({clientCode: text})}
@@ -171,8 +205,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        addDeviceData: (deviceName,code,clientCode,deviceCode,imageIndex) => dispatch( actions.addDevice(deviceName,code,clientCode,deviceCode,imageIndex) ),
-        storeDevice: (devices) => dispatch(actions.storeDeviceToStorage(devices))
+        addDeviceData: (deviceName,clientCode,deviceCode,imageIndex) => dispatch( actions.addDevice(deviceName,clientCode,deviceCode,imageIndex) ),
     };
 };
 
